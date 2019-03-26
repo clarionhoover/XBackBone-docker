@@ -18,7 +18,7 @@ This is the Docker image for [XBackBone](https://github.com/SergiX44/XBackBone) 
 -	**Supported Docker versions**:  
 	[the latest release](https://github.com/docker/docker-ce/releases/latest) (down to 1.6 on a best-effort basis)
 
-# How to use this image
+# How to use this image with SQLite
 
 You can use the following command to start the container and map the ports to the host:
 
@@ -29,8 +29,22 @@ $ docker run -p 80:80 \
 		pe46dro/xbackbone-docker
 ```
 
+# How to use this image with MySQL
+
+You can use the following command to start the container and map the ports to your host, and enter your DB information, please note this requires an already running MySQL server, if you have one on your local host, or in docker, you can either use the hostname in the MYSQL_HOST field, or you can use something like [hostlocal](https://github.com/gliderlabs/hostlocal) to access the port on your host with a link local address without the 127.0.0.1 gotcha of docker.
+```console
+$ docker run -p 80:80 \
+    -e URL=http:\/\/127.0.0.1 \
+    -e DB=mysql \
+    -e MYSQL_HOST=169.254.255.254 \
+    -e MYSQL_DB=xbb \
+    -e MYSQL_USER=mysql \
+    -e MYSQL_PASS=xbb \
+    --name xbb \
+```
+
 ## Container shell access
-Nginx erver log is available through Docker's container log:
+Nginx server log is available through Docker's container log:
 
 ```console
 $ docker logs xbb
@@ -45,6 +59,9 @@ This will specify the app url, slashes need to be escaped like follow
 
 ### `GENERATE_RELEASE=TRUE` *dev-only*
 If set, this environment variable will generate a release zip and will place it on `srv/xbb/storage`
+
+### `DB=mysql`
+If set this environment variable will switch the container to use MySQL, the default is SQLite
 
 ## Build Args Variables
 When you build the image yourself, you can adjust the version using the `--build-arg variable=value` parameter on the `docker build` command line.
